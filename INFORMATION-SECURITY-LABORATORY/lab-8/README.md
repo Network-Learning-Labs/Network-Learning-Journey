@@ -72,7 +72,7 @@ mysql -u root -pdees
 `use sqllab_users;
 SELECT * FROM credential WHERE Name = 'Alice';`
 
-![test-1](test-1.png)
+![test-1](te.png)
 
  
 
