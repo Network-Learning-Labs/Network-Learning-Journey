@@ -313,3 +313,55 @@ We used the 'NickName' field to inject the password update command into the data
    Successfully logged in and controlled Boby's account.
 
 ![test-7](te-7.png)
+
+# SQL Injection Lab - Task 4: Countermeasure (Prepared Statement)
+
+هذا الملف يوثق تنفيذ المهمة 4 لإصلاح ثغرات SQL Injection باستخدام آلية الـ Prepared Statements.
+This file documents the completion of Task 4, fixing SQL injection vulnerabilities using the Prepared Statement mechanism.
+
+## 1. Objective (الهدف)
+تحويل الكود البرمجي من صيغة معرضة للاختراق إلى صيغة آمنة تمنع هجمات الـ SQL Injection عن طريق فصل الكود عن البيانات.
+Transforming the code from a vulnerable state to a secure one that prevents SQL injection attacks by separating code from data.
+
+## 2. Methodology & Troubleshooting (المنهجية وحل المشاكل)
+للوصول إلى الملف المطلوب، قمنا بالعمل داخل **حاوية الويب (Web Container)** وليس حاوية قاعدة البيانات، باتباع الخطوات التالية:
+To access the required file, we worked inside the **Web Container**, not the database container, following these steps:
+
+1. **تحديد اسم الحاوية (Identifying the Container):**
+   قمنا بتشغيل أمر `docker ps` لمعرفة اسم حاوية الويب الصحيح، والذي تبين أنه `www-10.9.0.5`.
+   We ran the `docker ps` command to identify the correct web container name, which was `www-10.9.0.5`.
+
+2. **الدخول إلى الحاوية (Entering the Container):**
+   استخدمنا الأمر التالي للدخول إلى الحاوية:
+   We used the following command to enter the container:
+   `docker exec -it www-10.9.0.5 /bin/bash`
+
+3. **الوصول للملف (Accessing the File):**
+   انتقلنا إلى مجلد الدفاع المطلوب:
+   We navigated to the target defense folder:
+   `cd /var/www/SQL_Injection/defense/`
+
+## 3. The Fix (الإصلاح البرمجي)
+قمنا بتعديل ملف `unsafe.php` باستخدام محرر النصوص `nano`. استبدلنا الاستعلام المباشر بـ `Prepared Statement` لضمان الحماية:
+We modified the `unsafe.php` file using the `nano` editor. We replaced the direct query with a `Prepared Statement` to ensure security:
+
+**Code Before (قبل التعديل):**
+```php
+$result = $conn->query("SELECT id, name, eid, salary, ssn FROM credential WHERE name= '$input_uname' and Password= '$hashed_pwd'");
+```
+
+**Code After (بعد التعديل):**
+```php
+$stmt = $conn->prepare("SELECT id, name, eid, salary, ssn FROM credential WHERE name = ? and Password = ?");
+$stmt->bind_param("ss", $input_uname, $hashed_pwd);
+$stmt->execute();
+$result = $stmt->get_result();
+```
+![test-8](te-8.png)
+
+
+## 4. Conclusion (الخاتمة)
+بعد حفظ التعديلات، قمنا بتجربة الموقع مرة أخرى. النتيجة كانت فشل أي محاولة حقن (SQL Injection)، مما يؤكد نجاح آلية الـ Prepared Statements في حماية الموقع.
+After saving the changes, we tested the site again. All SQL injection attempts failed, confirming the success of the Prepared Statement mechanism in securing the site.
+
+![test-9](te-9.png)
