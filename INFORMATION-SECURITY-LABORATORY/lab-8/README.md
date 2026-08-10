@@ -74,7 +74,7 @@ SELECT * FROM credential WHERE Name = 'Alice';`
 
 ![test-1](te.png)
 
- # SQL Injection Lab - Task 2: Web Login Attack
+ ## SQL Injection Lab - Task 2.1: Web Login Attack
 
 This guide explains how to bypass the login authentication using SQL Injection.
 
@@ -113,4 +113,30 @@ The application constructs an SQL query in the background like this:
 The database executes: `SELECT ... FROM credential WHERE name = 'admin'` and **ignores** the password check entirely. This tricks the system into granting you access as the administrator.
  
 ![test-2](te-2.png)
+
+ ## SQL Injection Lab - Task 2.2: Web Login Attack
+
+This guide explains how to perform the SQL Injection attack using the command line instead of the web browser.
+
+## 1. Objective (الهدف)
+To perform the same SQL Injection attack as in Task 2.1, but using command-line tools like `curl` to send HTTP requests directly to the server.
+
+## 2. Important Notes & Troubleshooting (ملاحظات هامة)
+
+*   **Where to execute:** Do **not** execute the `curl` command inside the MySQL container (the one showing `mysql>`). You must run it from the main terminal of your virtual machine (e.g., inside the `Labsetup` directory).
+*   **Why:** The `curl` command sends HTTP requests to the web application. The MySQL container is only for database management, while the web requests must be handled by the web container or the host environment.
+*   **Encoding:** Since we are using special characters (`'`, space) in a URL, we must encode them:
+    *   `'` becomes `%27`
+    *   Space becomes `%20`
+
+## 3. Steps (الخطوات)
+
+1.  **Open the Terminal:** Ensure you are in your working directory (e.g., `~/Labsetup`).
+2.  **Execute the Attack:** Run the following command:
+    ```bash
+    curl 'www.seed-server.com/unsafe_home.php?username=admin%27%20--%20&Password='
+    ```
+3.  **Result:** The terminal will display the raw HTML of the page. You will see employee data (like 'Alice', 'Boby', 'Admin') within the HTML tags, confirming the attack was successful.
+
+![test-2](te-3.png)
 
