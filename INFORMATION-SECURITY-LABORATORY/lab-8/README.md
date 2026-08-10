@@ -140,3 +140,31 @@ To perform the same SQL Injection attack as in Task 2.1, but using command-line 
 
 ![test-2](te-3.png)
 
+# SQL Injection Lab - Task 2.3: Appending SQL Statements
+
+This guide documents the attempt to perform an SQL injection attack by appending a second SQL statement to the original one.
+
+## 1. Objective (الهدف)
+The goal was to inject a second SQL command (like `UPDATE`) into the login page to modify database information, using a semicolon (`;`) to separate statements.
+
+## 2. Methodology & Payload (المنهجية والأمر المستخدم)
+To attempt this, we injected the following payload into the **Username** field:
+`admin'; UPDATE credential SET PhoneNumber='12345' WHERE Name='admin'; -- `
+
+### Payload Breakdown (شرح الأمر):
+*   **`admin'`**: Closes the initial SQL string field for the username.
+*   **`;`**: A semicolon used to terminate the original `SELECT` statement.
+*   **`UPDATE ...`**: The second SQL statement intended to modify the database.
+*   **`; -- `**: Terminating the new statement and commenting out the rest of the original query.
+
+## 3. Findings (النتائج والملاحظات)
+Upon executing this, the application returned an SQL syntax error:
+*   **Observation:** The system rejected the second command and returned a syntax error message.
+*   **Conclusion:** This error serves as the expected result for this task. It confirms the presence of a **countermeasure** (likely a multi-query prevention setting in the database connection or the web application code) that explicitly prohibits executing multiple SQL statements via a single web input.
+
+---
+*Note: The generated syntax error is the required evidence to prove that the application is protected against this specific type of advanced SQL injection.*
+![test-2](te-4.png)
+
+
+
