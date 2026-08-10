@@ -266,3 +266,50 @@ We encountered some issues initially when trying to access the database from the
 The operation was successful; Boby's salary was changed to 1, and this was successfully verified via a database query.
 
 ![test-6](te-6.png)
+
+
+# SQL Injection Lab - Task 3.3: Modifying Other People's Password
+
+هذا الملف يوثق تنفيذ المهمة 3.3 لاستغلال ثغرة SQL Injection لتغيير كلمة مرور موظف آخر (Boby) والتحكم بحسابه.
+This file documents the completion of Task 3.3, exploiting SQL injection to change another employee's password (Boby) and take control of their account.
+
+## 1. Objective (الهدف)
+تغيير كلمة المرور الخاصة بحساب الموظف (Boby) إلى كلمة مرور معروفة لنا، لكي نتمكن من الدخول إلى حسابه والتحكم به.
+To change the password of Boby's account to a password known to us, allowing us to log in and control his account.
+
+## 2. Technical Challenge & Solution (التحدي التقني والحل)
+*   **المشكلة:** النظام لا يخزن كلمة المرور بشكل نصي عادي (Plaintext)، بل يستخدم دالة التشفير `SHA1`. لذا، لا يمكننا كتابة كلمة المرور مباشرة في أمر الحقن.
+    *   **Problem:** The system does not store passwords in plaintext; it uses the `SHA1` hash function. Therefore, we cannot inject the password string directly.
+*   **الحل:** قمنا بحساب قيمة الـ `SHA1` لكلمة المرور التي اخترناها (`123456`) وهي: `7c4a8d09ca3762af61e59520943dc26494f8941b`.
+    *   **Solution:** We calculated the `SHA1` hash for our chosen password (`123456`), which is: `7c4a8d09ca3762af61e59520943dc26494f8941b`.
+
+## 3. Methodology & Payload (المنهجية والأمر المستخدم)
+قمنا باستخدام خانة الـ (NickName) لحقن أمر تعديل كلمة المرور في قاعدة البيانات.
+We used the 'NickName' field to inject the password update command into the database.
+
+**Payload used:**
+`alice', Password='7c4a8d09ca3762af61e59520943dc26494f8941b' WHERE Name='Boby' -- `
+
+### Explanation (شرح الأمر):
+*   **`alice'`**: إغلاق حقل الـ nickname الأصلي لتجنب أخطاء الـ Syntax.
+    *   Closed the original 'nickname' field to avoid syntax errors.
+*   **`Password='...'`**: تعيين قيمة الـ Hash الخاصة بكلمة المرور الجديدة لحساب Boby.
+    *   Setting the hash value of the new password for Boby's account.
+*   **`WHERE Name='Boby'`**: توجيه التعديل ليتم تطبيقه على حساب Boby.
+    *   Directing the update to be applied to Boby's account.
+*   **`-- `**: تعليق ما تبقى من الاستعلام الأصلي.
+    *   Commenting out the rest of the original query.
+
+## 4. Steps Taken (الخطوات التي قمنا بها)
+1. قمنا بالدخول إلى صفحة تعديل الملف الشخصي (Edit Profile) بحساب Alice.
+   Accessed the 'Edit Profile' page using Alice's account.
+2. قمنا بحقن الـ Payload في خانة الـ (NickName).
+   Injected the payload into the 'NickName' field.
+3. ضغطنا على زر (Save) لتنفيذ الأمر.
+   Clicked the 'Save' button to execute the command.
+4. قمنا بتسجيل الخروج والدخول مجدداً باستخدام اسم المستخدم `Boby` وكلمة المرور `123456`.
+   Logged out and logged back in using username `Boby` and password `123456`.
+5. نجحنا في الدخول والتحكم بحساب Boby.
+   Successfully logged in and controlled Boby's account.
+
+![test-7](te-7.png)
