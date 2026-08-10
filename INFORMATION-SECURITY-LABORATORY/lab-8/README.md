@@ -213,3 +213,56 @@ We exploited the 'NickName' field in the Edit Profile page to inject the salary 
 
 ![test-5](te-5.png)
 
+# SQL Injection Lab - Task 3.2: Modifying Other People's Salary
+
+هذا الملف يوثق تنفيذ المهمة 3.2 لاستغلال ثغرة SQL Injection لتعديل راتب موظف آخر (Boby) إلى 1 دولار.
+This file documents the completion of Task 3.2, exploiting SQL injection to modify another employee's salary (Boby) to 1 dollar.
+
+## 1. Objective (الهدف)
+تغيير راتب موظف آخر (Boby) إلى 1 دولار كعقاب، وذلك باستخدام ثغرة في صفحة تعديل الملف الشخصي.
+To change another employee's salary (Boby) to 1 dollar as a punishment, using the vulnerability in the 'Edit Profile' page.
+
+## 2. Methodology & Payload (المنهجية والأمر المستخدم)
+قمنا باستخدام خانة الـ (NickName) لحقن شرط `WHERE` جديد يستهدف موظفاً آخر.
+We used the 'NickName' field to inject a new `WHERE` clause targeting another employee.
+
+**Payload used:**
+`alice', salary=1 WHERE Name='Boby' -- `
+
+### Explanation (الشرح):
+*   **`alice'`**: إغلاق حقل الـ nickname لتجنب أخطاء الـ Syntax.
+    *   Closed the 'nickname' field to avoid syntax errors.
+*   **`salary=1`**: القيمة الجديدة لراتب المستهدف.
+    *   The new salary value for the target.
+*   **`WHERE Name='Boby'`**: توجيه أمر الـ UPDATE ليتم تطبيقه على Boby بدلاً من الموظف الحالي.
+    *   Redirecting the UPDATE command to be applied to Boby instead of the current employee.
+*   **`-- `**: تعليق ما تبقى من الاستعلام الأصلي.
+    *   Commenting out the rest of the original query.
+
+## 3. Troubleshooting & Database Access (حل المشاكل والوصول لقاعدة البيانات)
+واجهنا بعض المشاكل في البداية عند محاولة الوصول لقاعدة البيانات من التيرمنال، وهذه هي الخطوات الصحيحة لتفاديها مستقبلاً:
+We encountered some issues initially when trying to access the database from the terminal. Here are the correct steps to avoid them in the future:
+
+1. **الدخول إلى الـ MySQL (Accessing MySQL):**
+   استخدم الأمر التالي مع كلمة المرور الخاصة باللاب:
+   Use the following command with the lab password:
+   `mysql -u root -pdees`
+
+2. **عرض قواعد البيانات (Show Databases):**
+   `SHOW DATABASES;`
+
+3. **اختيار قاعدة البيانات الصحيحة (Select the correct Database):**
+   تأكدي من اختيار الاسم الصحيح (في حالتنا كان `sqllab_users`):
+   Make sure to select the correct name (in our case, it was `sqllab_users`):
+   `USE sqllab_users;`
+
+4. **التحقق من البيانات (Verifying Data):**
+   لعرض النتائج بعد تنفيذ الـ Payload:
+   To view the results after executing the payload:
+   `SELECT ID, Name, salary FROM credential;`
+
+## 4. Conclusion (الخاتمة)
+نجحت العملية وتم تغيير راتب Boby إلى 1، وتم التحقق من ذلك بنجاح من خلال استعلام قاعدة البيانات.
+The operation was successful; Boby's salary was changed to 1, and this was successfully verified via a database query.
+
+![test-6](te-6.png)
