@@ -138,7 +138,7 @@ To perform the same SQL Injection attack as in Task 2.1, but using command-line 
     ```
 3.  **Result:** The terminal will display the raw HTML of the page. You will see employee data (like 'Alice', 'Boby', 'Admin') within the HTML tags, confirming the attack was successful.
 
-![test-2](te-3.png)
+![test-3](te-3.png)
 
 # SQL Injection Lab - Task 2.3: Appending SQL Statements
 
@@ -164,7 +164,52 @@ Upon executing this, the application returned an SQL syntax error:
 
 ---
 *Note: The generated syntax error is the required evidence to prove that the application is protected against this specific type of advanced SQL injection.*
-![test-2](te-4.png)
 
+![test-4](te-4.png)
 
+# SQL Injection Lab - Task 3.1: Modifying Salary via Edit Profile
+
+هذا الملف يوثق خطوات تنفيذ المهمة 3.1 لاستغلال ثغرة SQL Injection في صفحة تعديل الملف الشخصي (Edit Profile) لتغيير الراتب.
+This file documents the steps taken to complete Task 3.1, exploiting the SQL injection vulnerability in the Edit Profile page to modify the salary.
+
+## 1. Objective (الهدف)
+تغيير الراتب الخاص بالموظفة (Alice) في قاعدة البيانات، رغم أن واجهة الموقع لا توفر صلاحية أو خانة لتعديله.
+To modify Alice's salary in the database, even though the website interface does not provide authorization or an input field to change it.
+
+## 2. Methodology & Payload (المنهجية والأمر المستخدم)
+لقد استغلينا خانة الـ (NickName) في صفحة تعديل الملف الشخصي لحقن أمر تعديل الراتب.
+We exploited the 'NickName' field in the Edit Profile page to inject the salary update command.
+
+**Payload used:**
+`alice', salary='99999`
+
+### Explanation (الشرح):
+*   **`alice'`**: قمنا بإغلاق حقل الـ nickname الأصلي في استعلام الـ UPDATE لنتجنب حدوث خطأ في الـ Syntax.
+    *   Closed the original 'nickname' field in the UPDATE query to avoid syntax errors.
+*   **`,` (الفاصلة)**: سمحت لنا هذه الفاصلة بإضافة عمود جديد (salary) إلى استعلام الـ UPDATE.
+    *   The comma allowed us to append a new column (salary) to the UPDATE statement.
+*   **`salary='99999'`**: هذا هو الأمر الذي قام فعلياً بتغيير قيمة الراتب في قاعدة البيانات.
+    *   This is the command that successfully updated the salary value in the database.
+
+## 3. Steps Taken (الخطوات التي قمنا بها)
+1. قمنا بتسجيل الدخول كـ (Alice) في الموقع.
+   Logged into the website as 'Alice'. `alice' --` 
+   * هذا الأمر سيغلق خانة الاسم ويلغي التحقق من كلمة المرور تماماً فتدخلين الحساب مباشرة!
+2. توجهنا إلى صفحة تعديل الملف الشخصي (Edit Profile Page).
+   Navigated to the 'Edit Profile' page.
+3. قمنا بحقن الـ Payload في خانة الـ (NickName).
+   Injected the payload into the 'NickName' field. `alice', salary='99999`
+
+4. ضغطنا على زر (Save) لتنفيذ الأمر.
+   Clicked the 'Save' button to execute the command.
+5. تحققنا من النتيجة عبر صفحة الـ (Home) حيث ظهر الراتب الجديد (99999).
+   Verified the result on the 'Home' page, where the new salary (99999) was displayed.
+
+## 4. Observations & Notes (الملاحظات)
+* تم التأكد من أن الثغرة تسمح بتعديل بيانات غير مصرح بها.
+  Confirmed that the vulnerability allows unauthorized data modification.
+* نجاح العملية أثبت أن المدخلات في صفحة الـ Edit Profile لا يتم تنظيفها بشكل صحيح من قبل النظام.
+  The success of the operation proved that inputs in the 'Edit Profile' page are not properly sanitized by the system.
+
+![test-5](te-5.png)
 
