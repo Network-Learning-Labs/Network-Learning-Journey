@@ -97,13 +97,41 @@ http://www.seed-server.com
 ## 🛠️ 2. خطوات التنفيذ العملية (Step-by-Step Implementation)
 1. فتح المتصفح والدخول إلى منصة Elgg على الرابط المحلي: `http://www.seed-server.com`.
 2. تسجيل الدخول بحساب **Alice** (اسم المستخدم: `alice`، كلمة المرور: `seedalice`).
-3. الانتقال إلى لوحة التحكم الشخصية والضغط على زر **"Edit profile"**.
+3. الانتقال إلى لوحة التحكم الشخصية والضغط على زر **"Edit html"**.
 4. في خانة الوصف (**About me**)، قمنا بإدخال كود الـ JavaScript التجريبي الآتي:
    ```html
    <script>alert('XSS');</script>
    ```
    * الضغط على زر الحفظ (Save) ورؤية النتيجة في صفحة البروفايل.
-
-  ![login](test-4.png)
+![login](test-4.png)
  
 
+# README - Task 2: Posting a Malicious Message to Display Cookies
+
+## 📌 1. فكرة التاسك والأهداف (Task Concept & Objectives)
+* **الفكرة العامة:** استغلال ثغرة البرمجة العابرة للمواقع المخزنة (**Stored XSS**) للوصول إلى معلومات حساسة مخزنة في متصفح الزائر، وتحديداً ملفات تعريف الارتباط (**Cookies**).
+* **السيناريو الذكي (دور المهاجم):** 
+  * نقوم بدور **"أليس" (المهاجم)** بزرع كود يقرأ الـ Cookies الخاصة بمتصفح أي مستخدم يزور الملف الشخصي، وعرضها عبر نافذة تنبيه (`Alert`).
+* **الأهداف:**
+  1. إثبات القدرة على الوصول لبيانات الجلسة الحساسة (`document.cookie`) عبر ثغرة XSS.
+  2. توضيح مخاطر هجمات اختطاف الجلسات (**Session Hijacking**) التي تعتمد على سرقة الـ Session ID.
+
+---
+
+## 📌 1. Task Concept & Objectives (English)
+* **General Idea:** Exploiting the Stored XSS vulnerability to access sensitive data stored in the victim's browser, specifically Session Cookies.
+* **The Attacker Scenario:** 
+  * Acting as **"Alice" (The Attacker)**, we inject a script into the profile to read and display the visiting user's `document.cookie` via an alert box.
+* **Objectives:**
+  1. Demonstrate the capability of accessing sensitive session tokens (`document.cookie`) through XSS.
+  2. Highlight the risks of **Session Hijacking** attacks where stolen session IDs allow unauthorized account access.
+
+---
+
+## 🛠️ 2. خطوات التنفيذ العملية (Step-by-Step Implementation)
+1. الانتقال إلى صفحة تعديل الملف الشخصي لـ **Alice** عبر الضغط على **"Edit html"**.
+2. تعديل حقل الوصف (**About me**) وإدخال الكود التالي:
+   ```html
+   <script>alert(document.cookie);</script>
+   ```
+   
