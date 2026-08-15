@@ -72,3 +72,36 @@ http://www.seed-server.com
 ![login](test-2.png)
 
 
+# README - Task 1: Stored XSS Basics (Posting a Malicious Message)
+
+## 📌 1. فكرة التاسك والأهداف (Task Concept & Objectives)
+* **الفكرة العامة:** تطبيق ثغرة البرمجة العابرة للمواقع المخزنة (**Stored XSS**) عبر حقن كود برمجتي خبيث داخل منصة التواصل الاجتماعي الضعيفة (Elgg).
+* **السيناريو الذكي (دور المهاجم):** 
+  * نقوم بدور **"أليس" (المهاجم)** بتعديل الملف الشخصي وزرع الكود، لكي تصاب الصفحة بالعدوى وكل من يزورها ينفذ الكود لديه.
+* **الأهداف:**
+  1. التحقق من وجود ثغرة Stored XSS وإثباتها عبر ظهور نافذة التنبيه (`Alert`).
+  2. التمهيد للتطورات اللاحقة في التاسكات القادمة (مثل تحويله إلى كود دودة `Worm` ينتشر تلقائياً بين مستخدمي الشبكة).
+
+---
+
+## 📌 1. Task Concept & Objectives (English)
+* **General Idea:** Practicing Stored Cross-Site Scripting (**Stored XSS**) by injecting malicious JavaScript into the vulnerable Elgg social media application.
+* **The Attacker Scenario:** 
+  * Acting as **"Alice" (The Attacker)**, we modify the profile to plant the payload, effectively infecting the page so that any visitor executes it.
+* **Objectives:**
+  1. Verify and prove the existence of the Stored XSS vulnerability using an alert box (`Alert`).
+  2. Prepare for upcoming tasks where this payload evolves into a self-propagating worm across network users.
+
+---
+
+## 🛠️ 2. خطوات التنفيذ العملية (Step-by-Step Implementation)
+1. فتح المتصفح والدخول إلى منصة Elgg على الرابط المحلي: `http://www.seed-server.com`.
+2. تسجيل الدخول بحساب **Alice** (اسم المستخدم: `alice`، كلمة المرور: `seedalice`).
+3. الانتقال إلى لوحة التحكم الشخصية والضغط على زر **"Edit profile"**.
+4. في خانة الوصف (**About me**)، قمنا بإدخال كود الـ JavaScript التجريبي الآتي:
+   ```html
+   <script>alert('XSS');</script>
+   ```
+   * الضغط على زر الحفظ (Save) ورؤية النتيجة في صفحة البروفايل.
+   
+
