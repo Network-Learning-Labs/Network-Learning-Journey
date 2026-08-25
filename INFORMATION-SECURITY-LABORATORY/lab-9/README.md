@@ -167,6 +167,23 @@ http://www.seed-server.com
    ```bash
    nc -lknv 5555
    ```
+# Netcat (`nc`) Options Guide | دليل خيارات أداة netcat
+
+> **Command Example | مثال على الأمر:** 
+> `$ nc -lknv 5555`
+
+---
+
+### Detailed Options Breakdown | تفصيل الخيارات
+
+| الخيار / Option | الشرح بالعربي | English Description |
+| :---: | :--- | :--- |
+| **`-l`** | وضع الأداة في حالة "الاستماع" بانتظار اتصال وارد من جهاز آخر، بدلاً من بدء اتصال خارجي. | Puts `netcat` into listening mode, waiting for incoming connections from a remote host rather than initiating an outbound connection. |
+| **`-k`** | إجبار السيرفر على الاستمرار في الاستماع لاتصالات جديدة حتى بعد انتهاء الاتصال الحالي. | Forces the server to keep listening for new connections even after the current client connection is completed or terminated. |
+| **`-n`** | منع البحث العكسي للأسماء (DNS)، والتعامل مباشرة مع عناوين الـ IP والأرقام لتسريع الاتصال. | Prevents DNS lookups and name resolution; forces `netcat` to use raw numeric IP addresses and port numbers only. |
+| **`-v`** | تفعيل المخرجات المفصلة (Verbose) لعرض معلومات أكثر عن حالة الاتصال والأحداث. | Enables verbose output, providing more detailed status messages and information about connection events. |
+| **`5555`** | يحدد رقم المنفذ (Port) الذي سيستمع عليه السيرفر لاستقبال الحزم والاتصالات. (Argument) | Specifies the port number on which the `netcat` server will listen for incoming traffic. |
+   
    * 1-الانتقال إلى صفحة تعديل الملف الشخصي لـ Alice وضبط خانة الوصف باستخدام وضع Edit HTML.
 
 إدخال كود السرقة الخبيث التالي:
